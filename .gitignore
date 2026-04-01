@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+.promptops/
+.promptops-assets/
+*.log
+.DS_Store
+package-lock.json
