@@ -131,11 +131,10 @@ a { text-decoration: none; color: inherit; }
   line-height: 1;
 }
 
-.shellonback-sm {
-  height: 11px;
-  width: auto;
-  filter: brightness(0) invert(1);
-  opacity: 0.8;
+.shellonback-text {
+  font-weight: 600;
+  color: #ff6b35;
+  letter-spacing: 0.02em;
 }
 
 /* ── Sidebar actions bar ── */
