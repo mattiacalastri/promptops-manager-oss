@@ -4,7 +4,7 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const pty = require('node-pty');
 
-const STORAGE_DIR = path.join(app.getPath('userData'), '.promptops');
+const STORAGE_DIR = path.join(app.getPath('userData'), '.polpo-control-panel');
 const PROMPTS_FILE = path.join(STORAGE_DIR, 'prompts.json');
 const SLOTS_FILE = path.join(STORAGE_DIR, 'slots.json');
 
@@ -20,13 +20,14 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
     height: 900,
+    title: '🐙 Polpo Control Panel',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
     titleBarStyle: 'hiddenInset',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0a0f1a',
   });
   win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   return win;

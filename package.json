@@ -1,7 +1,9 @@
 {
-  "name": "promptops-manager-oss",
-  "version": "1.0.0",
-  "description": "Minimal desktop app for AI CLI terminal sessions and prompt catalog",
+  "name": "polpo-control-panel",
+  "version": "0.1.0-alpha",
+  "description": "Polpo Control Panel — wrapper multi-agente per Claude Code con voice briefing e spawn esterno",
+  "author": "Mattia Calastri <mattia.calastri@gmail.com>",
+  "license": "MIT",
   "main": "electron/main.js",
   "scripts": {
     "build": "node scripts/build.js",
