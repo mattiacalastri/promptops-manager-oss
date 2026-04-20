@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
-const { execSync } = require('child_process');
+const { execSync, execFile } = require('child_process');
 const pty = require('node-pty');
 
 const STORAGE_DIR = path.join(app.getPath('userData'), '.polpo-control-panel');
@@ -351,3 +351,26 @@ app.whenReady().then(() => {
 });
 
 app.on('before-quit', () => spawnServer.close());
+
+// ═══════ VOICE ALERT + DOCK BADGE (Sprint 5) ═══════
+
+const voiceAlertedSessions = new Map();
+const VOICE_COOLDOWN_MS = 120000;
+
+ipcMain.handle('voice:alert', (_e, { sessionName }) => {
+  const now = Date.now();
+  if (voiceAlertedSessions.has(sessionName) && now - voiceAlertedSessions.get(sessionName) < VOICE_COOLDOWN_MS) return false;
+  voiceAlertedSessions.set(sessionName, now);
+  const python = '/usr/local/bin/python3.10';
+  const script = path.join(process.env.HOME || '', 'scripts', 'voice_briefing.py');
+  const text = `Signore, ${sessionName} chiede input. Intervento richiesto.`;
+  execFile(python, [script, text, '--play'], { timeout: 30000 }, (err) => {
+    if (err) console.warn('[polpo] voice alert error:', err.message);
+  });
+  return true;
+});
+
+ipcMain.handle('dock:badge', (_e, { count }) => {
+  if (process.platform === 'darwin') app.dock.setBadge(count > 0 ? String(count) : '');
+  return true;
+});

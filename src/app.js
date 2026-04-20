@@ -782,7 +782,15 @@ function setSessionStatus(session, newStatus) {
   session.status = newStatus;
   const tab = document.querySelector(`.session-tab[data-session-id="${session.id}"]`);
   if (tab) { tab.classList.add('tab-flash'); setTimeout(() => tab.classList.remove('tab-flash'), 600); }
+  if (newStatus === 'input-needed') window.api.voiceAlert(session.name || session.title || 'sessione');
+  updateDockBadge();
   renderAll();
+}
+
+function updateDockBadge() {
+  const allSessions = [...sessions, ...subAgents];
+  const needInput = allSessions.filter(s => s.alive && s.status === 'input-needed').length;
+  window.api.dockBadge(needInput);
 }
 
 // ═══════════════════════════════════════════════════════

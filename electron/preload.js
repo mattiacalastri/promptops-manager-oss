@@ -44,4 +44,8 @@ contextBridge.exposeInMainWorld('api', {
 
   // External spawn (Sprint 4) — fired by spawn server on POST /spawn
   onSpawnExternal: (cb) => ipcRenderer.on('spawn:external', (_e, p) => cb(p)),
+
+  // Voice alert + dock badge (Sprint 5)
+  voiceAlert: (sessionName) => ipcRenderer.invoke('voice:alert', { sessionName }),
+  dockBadge: (count) => ipcRenderer.invoke('dock:badge', { count }),
 });
