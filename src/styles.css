@@ -338,6 +338,32 @@ a { text-decoration: none; color: inherit; }
   color: var(--bs-secondary-color);
 }
 
+.session-last-line {
+  display: block;
+  font-size: 0.6rem;
+  color: rgba(108,117,125,0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.tab-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin: 0 3px;
+}
+
+.session-tab.tab-flash {
+  animation: tab-flash-anim 0.6s ease;
+}
+@keyframes tab-flash-anim {
+  0% { background: rgba(0,212,170,0.25); }
+  100% { background: transparent; }
+}
+
 .session-meta {
   flex-shrink: 0;
   display: flex;
@@ -358,6 +384,10 @@ a { text-decoration: none; color: inherit; }
 .status-waiting_input { background: #d29922; box-shadow: 0 0 4px rgba(210, 153, 34, 0.4); }
 .status-completed { background: #39c5cf; }
 .status-error { background: #f85149; box-shadow: 0 0 4px rgba(248, 81, 73, 0.4); }
+.status-input-needed { background: #f0c040; box-shadow: 0 0 6px rgba(240,192,64,0.6); animation: pulse-yellow 1.5s ease-in-out infinite; }
+.status-stuck { background: #ff5555; box-shadow: 0 0 6px rgba(255,85,85,0.6); animation: pulse-red 1.5s ease-in-out infinite; }
+@keyframes pulse-yellow { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
 .attention-dot {
   width: 7px;

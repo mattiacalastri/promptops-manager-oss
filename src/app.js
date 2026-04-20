@@ -34,6 +34,7 @@ const QUICK_AGENTS = {
 // DOM HELPERS
 // ═══════════════════════════════════════════════════════
 const $ = (s) => document.querySelector(s);
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ═══════════════════════════════════════════════════════
 // INIT
@@ -262,10 +263,12 @@ function createSessionItem(session, nested) {
   const prov = PROVIDERS[session.provider] || { label: session.provider, iconClass: '', tiIcon: 'ti-terminal' };
   const div = document.createElement('div');
   div.className = `session-item${session.id === activeSessionId ? ' active' : ''}${nested ? ' nested' : ''}`;
+  const _sc = session.alive ? session.status : 'completed';
+  const _ll = session.lastLine ? `<span class="session-last-line">${esc(session.lastLine)}</span>` : '';
   div.innerHTML = `<div class="session-icon ${prov.iconClass}"><i class="ti ${prov.tiIcon}"></i></div>
-    <div class="session-info"><span class="session-name">${session.name}</span></div>
-    <div class="session-meta"><span class="status-dot status-${session.alive ? session.status : 'completed'}"></span></div>
-    <button class="session-close-btn" data-kill="${session.id}"><i class="ti ti-x"></i></button>`;
+    <div class="session-info"><span class="session-name">${esc(session.name)}</span>${_ll}</div>
+    <div class="session-meta"><span class="status-dot status-${_sc}" title="${_sc}"></span></div>
+    <button class="session-close-btn" data-kill="${esc(session.id)}"><i class="ti ti-x"></i></button>`;
   div.addEventListener('click', e => { if (e.target.closest('.session-close-btn')) { killSession(e.target.closest('.session-close-btn').dataset.kill); return; } switchToSession(session.id); });
   div.addEventListener('contextmenu', e => { e.preventDefault(); ctxSessionId = session.id; $('#ctx-menu').style.left = e.clientX + 'px'; $('#ctx-menu').style.top = e.clientY + 'px'; $('#ctx-menu').classList.remove('hidden'); $('#ctx-backdrop').classList.remove('hidden'); });
   return div;
@@ -287,7 +290,9 @@ function renderSessionTabs() {
     const prov = PROVIDERS[s.provider] || { iconClass: '', tiIcon: 'ti-terminal' };
     const tab = document.createElement('button');
     tab.className = `session-tab${s.id === activeSessionId ? ' active' : ''}`;
-    tab.innerHTML = `<span class="tab-icon ${prov.iconClass}"><i class="ti ${prov.tiIcon}"></i></span><span>${s.name}</span><span class="tab-close" data-close="${s.id}"><i class="ti ti-x"></i></span>`;
+    tab.dataset.sessionId = s.id;
+    const _tsc = s.alive ? s.status : 'completed';
+    tab.innerHTML = `<span class="tab-icon ${prov.iconClass}"><i class="ti ${prov.tiIcon}"></i></span><span class="tab-name">${esc(s.name)}</span><span class="tab-status-dot status-dot status-${_tsc}"></span><span class="tab-close" data-close="${esc(s.id)}"><i class="ti ti-x"></i></span>`;
     tab.addEventListener('click', e => { if (e.target.closest('.tab-close')) { killSession(e.target.closest('.tab-close').dataset.close); return; } switchToSession(s.id); });
     $t.appendChild(tab);
   });
@@ -728,6 +733,59 @@ function renderSlots() {
 }
 
 // ═══════════════════════════════════════════════════════
+// STATUS DETECTOR ENGINE (Sprint 3)
+// Reads PTY output stream, detects CC interaction state.
+// ═══════════════════════════════════════════════════════
+
+const statusBuffers = {};   // rolling 512-char window per session (ANSI-stripped)
+const stuckTimers = {};     // stuck detection timeout handles
+
+const ANSI_RE = /\x1b\[[0-9;]*[mGKHFABCDST]|\x1b\].*?\x07|\x1b[()][AB012]/g;
+function stripAnsi(s) { return s.replace(ANSI_RE, ''); }
+
+const INPUT_NEEDED_PATTERNS = [
+  /do you want/i, /would you like/i, /press enter/i,
+  /\(y\/n\)/i, /\[y\/n\]/i, /\[Y\/n\]/i, /\[y\/N\]/i,
+  /continue\?/i, /proceed\?/i, /are you sure/i,
+  /^\s*>\s*$/m,
+];
+
+function detectAndUpdateStatus(sessionId, data) {
+  if (!statusBuffers[sessionId]) statusBuffers[sessionId] = '';
+  statusBuffers[sessionId] = (statusBuffers[sessionId] + stripAnsi(data)).slice(-512);
+  const buf = statusBuffers[sessionId];
+
+  const session = sessions.find(s => s.id === sessionId) || subAgents.find(s => s.id === sessionId);
+  if (!session || !session.alive) return;
+
+  // Track last meaningful output line for session subtitle
+  const lines = buf.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length > 0) session.lastLine = lines[lines.length - 1].slice(0, 60);
+
+  // Reset stuck timer on any output activity
+  clearTimeout(stuckTimers[sessionId]);
+
+  if (INPUT_NEEDED_PATTERNS.some(p => p.test(buf))) {
+    setSessionStatus(session, 'input-needed');
+    return;
+  }
+
+  setSessionStatus(session, 'running');
+  stuckTimers[sessionId] = setTimeout(() => {
+    const s = sessions.find(s => s.id === sessionId) || subAgents.find(s => s.id === sessionId);
+    if (s && s.alive && s.status === 'running') { setSessionStatus(s, 'stuck'); renderAll(); }
+  }, 30000);
+}
+
+function setSessionStatus(session, newStatus) {
+  if (session.status === newStatus) return;
+  session.status = newStatus;
+  const tab = document.querySelector(`.session-tab[data-session-id="${session.id}"]`);
+  if (tab) { tab.classList.add('tab-flash'); setTimeout(() => tab.classList.remove('tab-flash'), 600); }
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════
 // TOKEN EFFICIENCY ENGINE (local tracking)
 // ═══════════════════════════════════════════════════════
 
@@ -785,10 +843,11 @@ function trackTokens(sessionId, data) {
     }
   }
 
-// Single terminal data handler: write to xterm + track tokens
+// Single terminal data handler: write to xterm + track tokens + detect status
 window.api.onTerminalData(({ id, data }) => {
   if (terminalInstances[id]) terminalInstances[id].terminal.write(data);
   trackTokens(id, data);
+  detectAndUpdateStatus(id, data);
 });
 
 function updateTokenBar() {
