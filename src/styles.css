@@ -1,22 +1,27 @@
 /* ═══════════════════════════════════════════════════════
-   PromptOps Manager OSS
-   EXACT replica of session-view + session-sidebar styles
+   Polpo Control Panel
+   Wrapper multi-agente per Claude Code — Astra brand
    ═══════════════════════════════════════════════════════ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bs-primary: #6366f1;
-  --bs-primary-rgb: 99, 102, 241;
+  --polpo-teal: #00d4aa;
+  --polpo-teal-rgb: 0, 212, 170;
+  --polpo-dark: #0a0f1a;
+  --polpo-dark-2: #141b2d;
+  --polpo-dark-3: #1c2438;
+  --bs-primary: #00d4aa;
+  --bs-primary-rgb: 0, 212, 170;
   --bs-success: #3fb950;
   --bs-warning: #d29922;
   --bs-danger: #f85149;
   --bs-info: #39c5cf;
   --bs-body-color: #e6edf3;
-  --bs-body-bg: #0f172a;
+  --bs-body-bg: #0a0f1a;
   --bs-secondary-color: #6c7a8d;
-  --bs-secondary-bg: #1e1f27;
-  --bs-tertiary-bg: #1e1f27;
+  --bs-secondary-bg: #141b2d;
+  --bs-tertiary-bg: #141b2d;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
 }
@@ -76,7 +81,7 @@ a { text-decoration: none; color: inherit; }
   justify-content: center;
   padding: 8px;
   border-radius: 12px;
-  background: rgba(79, 70, 229, 0.05);
+  background: rgba(0, 212, 170, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -84,14 +89,14 @@ a { text-decoration: none; color: inherit; }
 }
 
 .logo-link:hover {
-  background: rgba(79, 70, 229, 0.15);
+  background: rgba(0, 212, 170, 0.15);
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.25);
 }
 
 .logo-lg { display: flex; width: 100%; }
 
-.promptops-brand {
+.polpo-brand {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -100,9 +105,10 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
 }
 
-.promptops-wordmark {
+.polpo-wordmark {
   display: flex;
   align-items: baseline;
+  gap: 8px;
   width: 100%;
   font-family: 'Inter', sans-serif;
   font-weight: 700;
@@ -111,10 +117,14 @@ a { text-decoration: none; color: inherit; }
   line-height: 1;
 }
 
-.prompt-text { color: #f0f0f0; }
+.polpo-emoji {
+  font-size: 1.9rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 170, 0.3));
+}
 
-.ops-text {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+.polpo-name {
+  background: linear-gradient(135deg, #00d4aa 0%, #00a8ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -124,17 +134,16 @@ a { text-decoration: none; color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.6rem;
-  font-weight: 400;
-  color: #9ca3af;
-  letter-spacing: 0.03em;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   line-height: 1;
+  text-transform: uppercase;
 }
 
-.shellonback-text {
-  font-weight: 600;
-  color: #ff6b35;
-  letter-spacing: 0.02em;
+.polpo-tag {
+  color: var(--polpo-teal);
+  opacity: 0.8;
 }
 
 /* ── Sidebar actions bar ── */
@@ -625,18 +634,27 @@ a { text-decoration: none; color: inherit; }
   text-align: center;
 }
 
-.welcome-logo {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  opacity: 0.5;
-  margin-bottom: 8px;
+.welcome-emoji {
+  font-size: 5rem;
+  line-height: 1;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 170, 0.35));
+  animation: polpo-breath 4s ease-in-out infinite;
+}
+
+@keyframes polpo-breath {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.05); opacity: 1; }
 }
 
 #welcome-screen h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00d4aa 0%, #00a8ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 #welcome-screen p {

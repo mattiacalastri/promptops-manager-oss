@@ -380,7 +380,7 @@ function getConfigInstructions(cfg) {
 function buildModePreamble() {
   const cfg = MODE_CONFIGS[selectedMode];
   return [
-    'You are a specialized sub-agent running inside PromptOps Manager and executed via Claude Code.',
+    'You are a specialized sub-agent running inside Polpo Control Panel and executed via Claude Code.',
     '',
     `ACTIVE MODE: ${MODE_ICONS[selectedMode]} ${MODE_LABELS[selectedMode]}`,
     'ACTIVE CONFIG:',
@@ -647,7 +647,7 @@ $('#assets-open-folder').addEventListener('click', e => { e.stopPropagation(); i
 
 function generateAssetPrompt(mode) {
   if (!activeSessionId) return;
-  const prompts = { analyze: 'Analyze the files in .promptops-assets/. Understand their content, identify issues, and propose solutions.', debug: 'Debug the files in .promptops-assets/. Perform root cause analysis and suggest step-by-step fixes.', explain: 'Explain the files in .promptops-assets/. Describe components, relationships, and how they work together.' };
+  const prompts = { analyze: 'Analyze the files in .polpo-assets/. Understand their content, identify issues, and propose solutions.', debug: 'Debug the files in .polpo-assets/. Perform root cause analysis and suggest step-by-step fixes.', explain: 'Explain the files in .polpo-assets/. Describe components, relationships, and how they work together.' };
   window.api.writeTerminal(activeSessionId, prompts[mode] || '');
 }
 $('#assets-analyze').addEventListener('click', () => generateAssetPrompt('analyze'));

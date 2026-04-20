@@ -120,7 +120,7 @@ ipcMain.handle('terminal:kill', (_e, { id }) => { const t = terminals.get(id); i
 // ═══════ CODE MAPPING ═══════
 
 ipcMain.handle('workspace:scan', (_e, { cwd, maxDepth }) => {
-  const ignore = new Set(['node_modules', '.git', '.next', 'dist', 'build', '__pycache__', '.venv', 'vendor', '.promptops-assets']);
+  const ignore = new Set(['node_modules', '.git', '.next', 'dist', 'build', '__pycache__', '.venv', 'vendor', '.polpo-assets']);
   const results = { dirs: 0, files: 0, items: [] };
 
   function scan(dir, depth, prefix) {
@@ -222,7 +222,7 @@ ipcMain.handle('git:push', (_e, { cwd }) => {
 // ═══════ ASSETS ═══════
 
 function getAssetsDir(cwd) {
-  const d = path.join(cwd, '.promptops-assets');
+  const d = path.join(cwd, '.polpo-assets');
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
   return d;
 }

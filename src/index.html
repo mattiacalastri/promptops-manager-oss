@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="it" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data:; script-src 'self' 'unsafe-inline';" />
   <title>🐙 Polpo Control Panel</title>
+  <meta name="description" content="Wrapper multi-agente per Claude Code — N sessioni parallele, voice briefing, spawn esterno." />
   <link rel="icon" href="./assets/logos/logo-icon.svg" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
@@ -20,26 +21,26 @@
       <div class="sidebar-header">
         <div class="logo-area">
           <a href="#" class="logo-link">
-            <span class="logo-lg"><span class="promptops-brand"><span class="promptops-wordmark"><span class="prompt-text">Prompt</span><span class="ops-text">Ops</span></span><span class="powered-by">powered by <span class="shellonback-text">ShellOnBack</span></span></span></span>
+            <span class="logo-lg"><span class="polpo-brand"><span class="polpo-wordmark"><span class="polpo-emoji">🐙</span><span class="polpo-name">Polpo</span></span><span class="powered-by"><span class="polpo-tag">Control Panel</span></span></span></span>
           </a>
         </div>
       </div>
       <div class="sidebar-actions-bar">
-        <h6 class="sidebar-title">Sessions</h6>
+        <h6 class="sidebar-title">Sessioni</h6>
         <div class="sidebar-header-actions">
-          <button class="btn-sidebar-action btn-primary-sm" id="btn-new-session"><i class="ti ti-plus"></i> New</button>
+          <button class="btn-sidebar-action btn-primary-sm" id="btn-new-session"><i class="ti ti-plus"></i> Nuova</button>
         </div>
       </div>
       <div class="session-list" id="session-list">
         <div id="workspace-section"></div>
-        <div id="sessions-container"><div class="empty-sidebar"><p>No active sessions</p></div></div>
+        <div id="sessions-container"><div class="empty-sidebar"><p>Nessuna sessione attiva</p></div></div>
       </div>
       <div class="sidebar-prompts-section">
         <div class="sidebar-actions-bar">
-          <h6 class="sidebar-title">Prompts</h6>
-          <div class="sidebar-header-actions"><button class="btn-sidebar-action btn-primary-sm" id="btn-new-prompt"><i class="ti ti-plus"></i> New</button></div>
+          <h6 class="sidebar-title">Prompt</h6>
+          <div class="sidebar-header-actions"><button class="btn-sidebar-action btn-primary-sm" id="btn-new-prompt"><i class="ti ti-plus"></i> Nuovo</button></div>
         </div>
-        <div id="prompts-container"><div class="empty-sidebar"><p>No prompts yet</p></div></div>
+        <div id="prompts-container"><div class="empty-sidebar"><p>Nessun prompt salvato</p></div></div>
       </div>
     </div>
 
@@ -48,24 +49,24 @@
       <!-- Session header -->
       <div class="session-header">
         <div class="session-header-left">
-          <button class="btn-icon-sm" id="btn-open-folder" title="Open folder"><i class="ti ti-folder"></i></button>
-          <span class="workspace-label" id="workspace-label">No workspace</span>
+          <button class="btn-icon-sm" id="btn-open-folder" title="Apri cartella"><i class="ti ti-folder"></i></button>
+          <span class="workspace-label" id="workspace-label">Nessuna cartella</span>
         </div>
         <div class="session-tabs" id="session-tabs"></div>
         <div class="session-header-right">
-          <button class="btn-icon-sm" id="btn-new-session-header" title="New session"><i class="ti ti-plus"></i></button>
+          <button class="btn-icon-sm" id="btn-new-session-header" title="Nuova sessione"><i class="ti ti-plus"></i></button>
         </div>
       </div>
 
       <!-- Terminal pane -->
       <div class="terminal-pane" id="terminal-pane">
         <div id="welcome-screen">
-          <img src="./assets/logos/logo-icon.svg" alt="PromptOps" class="welcome-logo" />
-          <h2>PromptOps Manager</h2>
-          <p>Open a workspace folder, then start a new terminal session with your favorite AI CLI tool.</p>
+          <img src="./assets/logos/logo-icon.svg" alt="Polpo Control Panel" class="welcome-logo" />
+          <h2>Il branco è pronto.</h2>
+          <p>Apri una cartella e lancia il primo tentacolo. Ogni sessione è un agente autonomo. Più tab, più lavoro in parallelo.</p>
           <div class="welcome-actions">
-            <button class="btn-primary-action" id="btn-welcome-open"><i class="ti ti-folder"></i> Open Folder</button>
-            <button class="btn-primary-action" id="btn-welcome-new"><i class="ti ti-terminal"></i> New Session</button>
+            <button class="btn-primary-action" id="btn-welcome-open"><i class="ti ti-folder"></i> Apri cartella</button>
+            <button class="btn-primary-action" id="btn-welcome-new"><i class="ti ti-terminal"></i> Nuova sessione</button>
           </div>
         </div>
       </div>
@@ -73,14 +74,14 @@
       <!-- ═══ Sub-Agents Accordion ═══ -->
       <div class="subagents-accordion" id="subagents-accordion">
         <div class="subagents-accordion-header" id="subagents-toggle">
-          <span class="sa-title"><i class="ti ti-cpu"></i> SUB-AGENTS <span class="sa-badge" id="sa-count">0</span></span>
+          <span class="sa-title"><i class="ti ti-cpu"></i> AGENTI PARALLELI <span class="sa-badge" id="sa-count">0</span></span>
           <div class="sa-header-actions">
             <div class="sa-mode-group">
               <button class="btn-sa-mode active" data-layout="split" title="Split"><i class="ti ti-layout-columns"></i></button>
               <button class="btn-sa-mode" data-layout="tabs" title="Tabs"><i class="ti ti-layout-bottombar"></i></button>
               <button class="btn-sa-mode" data-layout="grid" title="Grid"><i class="ti ti-grid-dots"></i></button>
             </div>
-            <button class="btn-icon-sm" id="btn-new-subagent" title="New sub-agent"><i class="ti ti-plus"></i></button>
+            <button class="btn-icon-sm" id="btn-new-subagent" title="Nuovo agente"><i class="ti ti-plus"></i></button>
             <i class="ti ti-chevron-up sa-chevron" id="sa-chevron"></i>
           </div>
         </div>
@@ -91,11 +92,11 @@
 
       <!-- ═══ Token Efficiency Bar ═══ -->
       <div class="token-bar" id="token-bar">
-        <span class="token-cell title"><i class="ti ti-chart-dots"></i> Token Efficiency</span>
-        <span class="token-cell"><span class="t-label">Used</span> <span class="t-val" id="t-used">0</span></span>
-        <span class="token-cell"><span class="t-label">Baseline</span> <span class="t-val muted" id="t-baseline">0</span></span>
-        <span class="token-cell"><span class="t-label">Saved</span> <span class="t-val accent" id="t-saved">0</span></span>
-        <span class="token-cell"><span class="t-label">Efficiency</span> <span class="t-val accent" id="t-efficiency">0%</span></span>
+        <span class="token-cell title"><i class="ti ti-chart-dots"></i> Resa Token</span>
+        <span class="token-cell"><span class="t-label">Usati</span> <span class="t-val" id="t-used">0</span></span>
+        <span class="token-cell"><span class="t-label">Base</span> <span class="t-val muted" id="t-baseline">0</span></span>
+        <span class="token-cell"><span class="t-label">Risparmio</span> <span class="t-val accent" id="t-saved">0</span></span>
+        <span class="token-cell"><span class="t-label">Resa</span> <span class="t-val accent" id="t-efficiency">0%</span></span>
         <span class="token-cell breakdown-icons">
           <span class="flag-chip" id="flag-context" style="display:none"><i class="ti ti-map"></i> Context</span>
           <span class="flag-chip" id="flag-cache" style="display:none"><i class="ti ti-database"></i> Cache</span>
@@ -114,17 +115,17 @@
               <span class="branch-badge" id="git-branch">—</span>
               <button class="btn-icon-xs" id="git-pull" title="Pull"><i class="ti ti-arrow-down"></i></button>
               <button class="btn-icon-xs" id="git-push" title="Push"><i class="ti ti-arrow-up"></i></button>
-              <button class="btn-icon-xs" id="git-refresh" title="Refresh"><i class="ti ti-refresh"></i></button>
+              <button class="btn-icon-xs" id="git-refresh" title="Aggiorna"><i class="ti ti-refresh"></i></button>
               <i class="ti ti-chevron-up git-chevron" id="git-chevron"></i>
             </div>
           </div>
           <div class="git-body hidden" id="git-body">
             <div id="git-files"></div>
             <div class="git-commit-section">
-              <textarea class="commit-input" id="commit-msg" rows="2" placeholder="Commit message..."></textarea>
+              <textarea class="commit-input" id="commit-msg" rows="2" placeholder="Messaggio commit..."></textarea>
               <div class="git-commit-actions">
-                <button class="btn-git-action btn-generate" id="git-ai-msg" title="AI Message"><i class="ti ti-sparkles"></i> AI</button>
-                <button class="btn-git-action btn-stage-all" id="git-stage-all"><i class="ti ti-check"></i> Stage All</button>
+                <button class="btn-git-action btn-generate" id="git-ai-msg" title="Messaggio AI"><i class="ti ti-sparkles"></i> AI</button>
+                <button class="btn-git-action btn-stage-all" id="git-stage-all"><i class="ti ti-check"></i> Stage tutto</button>
                 <button class="btn-git-action btn-commit" id="git-commit-btn"><i class="ti ti-git-commit"></i> Commit</button>
               </div>
             </div>
@@ -135,19 +136,19 @@
         <!-- Assets Panel -->
         <div class="assets-panel" id="assets-panel">
           <div class="assets-header" id="assets-toggle">
-            <span class="assets-title"><i class="ti ti-files"></i> ASSETS <span class="assets-badge" id="assets-badge">0</span></span>
+            <span class="assets-title"><i class="ti ti-files"></i> ASSET <span class="assets-badge" id="assets-badge">0</span></span>
             <div class="assets-header-actions">
-              <button class="btn-icon-xs" id="assets-upload" title="Upload"><i class="ti ti-upload"></i></button>
-              <button class="btn-icon-xs" id="assets-open-folder" title="Open folder"><i class="ti ti-folder"></i></button>
+              <button class="btn-icon-xs" id="assets-upload" title="Carica"><i class="ti ti-upload"></i></button>
+              <button class="btn-icon-xs" id="assets-open-folder" title="Apri cartella"><i class="ti ti-folder"></i></button>
               <i class="ti ti-chevron-up assets-chevron" id="assets-chevron"></i>
             </div>
           </div>
           <div class="assets-body hidden" id="assets-body">
             <div class="assets-grid" id="assets-grid"></div>
             <div class="ai-actions-bar">
-              <button class="ai-action-btn analyze" id="assets-analyze"><i class="ti ti-eye"></i> Analyze</button>
+              <button class="ai-action-btn analyze" id="assets-analyze"><i class="ti ti-eye"></i> Analizza</button>
               <button class="ai-action-btn debug" id="assets-debug"><i class="ti ti-bug"></i> Debug</button>
-              <button class="ai-action-btn explain" id="assets-explain"><i class="ti ti-info-circle"></i> Explain</button>
+              <button class="ai-action-btn explain" id="assets-explain"><i class="ti ti-info-circle"></i> Spiega</button>
             </div>
           </div>
         </div>
@@ -157,16 +158,16 @@
     <!-- ═══ RIGHT: Action Center (Prompt Injection Sidebar) ═══ -->
     <div class="action-center" id="action-center">
       <div class="action-header" id="action-toggle">
-        <span class="action-title"><i class="ti ti-cpu"></i> Sub-Agents</span>
+        <span class="action-title"><i class="ti ti-cpu"></i> Agenti</span>
         <i class="ti ti-chevron-right action-chevron" id="action-chevron"></i>
       </div>
       <div class="action-center-scroll" id="action-scroll">
         <!-- Mode selector -->
         <div class="mode-selector-section">
-          <div class="section-label"><i class="ti ti-adjustments"></i> Mode</div>
+          <div class="section-label"><i class="ti ti-adjustments"></i> Modalità</div>
           <div class="mode-grid" id="mode-grid">
             <button class="mode-btn active" data-mode="sprint"><span class="mode-icon">&#9889;</span><span class="mode-label">Sprint</span></button>
-            <button class="mode-btn" data-mode="architect"><span class="mode-icon">&#129504;</span><span class="mode-label">Architect</span></button>
+            <button class="mode-btn" data-mode="architect"><span class="mode-icon">&#129504;</span><span class="mode-label">Architetto</span></button>
             <button class="mode-btn" data-mode="detective"><span class="mode-icon">&#128027;</span><span class="mode-label">Detective</span></button>
             <button class="mode-btn" data-mode="refactor"><span class="mode-icon">&#128295;</span><span class="mode-label">Refactor</span></button>
             <button class="mode-btn" data-mode="paranoid"><span class="mode-icon">&#129514;</span><span class="mode-label">Paranoid</span></button>
@@ -176,26 +177,26 @@
 
         <!-- Create sub-agent -->
         <div class="create-agent-section">
-          <div class="section-label"><i class="ti ti-bolt"></i> Spawn Agent</div>
+          <div class="section-label"><i class="ti ti-bolt"></i> Lancia agente</div>
           <div class="create-agent-form">
             <select class="agent-input" id="sa-provider">
               <option value="claude">Claude Code CLI</option>
               <option value="codex">OpenAI Codex</option>
               <option value="gemini">Gemini CLI</option>
             </select>
-            <textarea class="agent-textarea" id="sa-prompt" rows="3" placeholder="Agent prompt..."></textarea>
+            <textarea class="agent-textarea" id="sa-prompt" rows="3" placeholder="Cosa deve fare l'agente..."></textarea>
             <div class="spawn-row">
-              <button class="btn-spawn" id="btn-spawn-agent"><i class="ti ti-player-play"></i> Spawn</button>
+              <button class="btn-spawn" id="btn-spawn-agent"><i class="ti ti-player-play"></i> Lancia</button>
             </div>
           </div>
         </div>
 
         <!-- Quick agents -->
         <div class="quick-agents-section">
-          <div class="section-label"><i class="ti ti-rocket"></i> Quick Agents</div>
+          <div class="section-label"><i class="ti ti-rocket"></i> Agenti rapidi</div>
           <div class="quick-agents-row" id="quick-agents">
-            <button class="quick-agent-chip" data-agent="security" title="Security"><i class="ti ti-shield"></i></button>
-            <button class="quick-agent-chip" data-agent="tests" title="Tests"><i class="ti ti-test-pipe"></i></button>
+            <button class="quick-agent-chip" data-agent="security" title="Sicurezza"><i class="ti ti-shield"></i></button>
+            <button class="quick-agent-chip" data-agent="tests" title="Test"><i class="ti ti-test-pipe"></i></button>
             <button class="quick-agent-chip" data-agent="review" title="Review"><i class="ti ti-zoom-code"></i></button>
             <button class="quick-agent-chip" data-agent="docs" title="Docs"><i class="ti ti-file-text"></i></button>
             <button class="quick-agent-chip" data-agent="refactor" title="Refactor"><i class="ti ti-code"></i></button>
@@ -205,15 +206,15 @@
 
         <!-- Active sub-agents list -->
         <div class="active-agents-section">
-          <div class="section-label"><i class="ti ti-activity"></i> Active <span class="sa-active-count" id="sa-active-count">0</span></div>
+          <div class="section-label"><i class="ti ti-activity"></i> Attivi <span class="sa-active-count" id="sa-active-count">0</span></div>
           <div id="active-agents-list"></div>
         </div>
 
         <!-- Prompt Slots (saved prompt injection) -->
         <div class="slots-section">
           <div class="slots-header">
-            <span class="section-label"><i class="ti ti-bookmarks"></i> Prompt Slots</span>
-            <button class="btn-icon-xs" id="btn-add-slot" title="Add slot"><i class="ti ti-plus"></i></button>
+            <span class="section-label"><i class="ti ti-bookmarks"></i> Slot prompt</span>
+            <button class="btn-icon-xs" id="btn-add-slot" title="Aggiungi slot"><i class="ti ti-plus"></i></button>
           </div>
           <div class="slots-list" id="slots-list"></div>
         </div>
@@ -226,17 +227,17 @@
 <!-- ═══ Dialogs ═══ -->
 <div class="dialog-backdrop" id="dialog-backdrop"></div>
 <div class="dialog dialog-lg" id="new-session-dialog">
-  <h2><i class="ti ti-terminal dialog-icon"></i> New Terminal Session</h2>
+  <h2><i class="ti ti-terminal dialog-icon"></i> Nuova sessione</h2>
 
   <!-- Session Name -->
   <div class="form-group">
-    <label>Session Name</label>
-    <input type="text" id="session-name-input" placeholder="My session..." />
+    <label>Nome sessione</label>
+    <input type="text" id="session-name-input" placeholder="es. Fix bug API..." />
   </div>
 
   <!-- Provider -->
   <div class="form-group">
-    <label>Provider</label>
+    <label>CLI</label>
     <select id="session-provider">
       <option value="claude">Claude Code CLI</option>
       <option value="codex">OpenAI Codex</option>
@@ -246,20 +247,20 @@
 
   <!-- Workspace Selection -->
   <div class="form-group">
-    <label>Workspace</label>
+    <label>Cartella di lavoro</label>
     <div class="workspace-picker">
       <div class="workspace-selected-path" id="ws-selected-path">
-        <span class="ws-path-text" id="ws-path-text">No workspace selected</span>
+        <span class="ws-path-text" id="ws-path-text">Nessuna cartella selezionata</span>
         <button class="ws-clear-btn hidden" id="ws-clear-btn"><i class="ti ti-x"></i></button>
       </div>
       <div class="workspace-action-cards">
         <button class="ws-action-card" id="ws-select-folder">
           <span class="ws-action-icon"><i class="ti ti-folder"></i></span>
-          <span class="ws-action-text"><strong>Select folder</strong><small>Choose existing folder</small></span>
+          <span class="ws-action-text"><strong>Scegli</strong><small>Cartella esistente</small></span>
         </button>
         <button class="ws-action-card" id="ws-create-folder">
           <span class="ws-action-icon"><i class="ti ti-folder-plus"></i></span>
-          <span class="ws-action-text"><strong>Create new</strong><small>Create a new folder</small></span>
+          <span class="ws-action-text"><strong>Crea nuova</strong><small>Nuova cartella</small></span>
         </button>
       </div>
     </div>
@@ -267,34 +268,34 @@
 
   <!-- Code Mapping -->
   <div class="form-group" id="code-map-section" style="display:none">
-    <label>Code Mapping</label>
+    <label>Scansione codice</label>
     <div class="code-map-container" id="code-map-container">
-      <div class="code-map-loading"><i class="ti ti-loader spinning"></i> Scanning workspace...</div>
+      <div class="code-map-loading"><i class="ti ti-loader spinning"></i> Scansione cartella...</div>
     </div>
   </div>
 
   <!-- Initial Prompt -->
   <div class="form-group">
-    <label>Initial Prompt (optional)</label>
-    <select id="session-prompt-select"><option value="">None</option></select>
+    <label>Prompt iniziale (opzionale)</label>
+    <select id="session-prompt-select"><option value="">Nessuno</option></select>
   </div>
 
   <!-- Advanced -->
   <div class="form-group">
-    <button class="btn-toggle-advanced" id="btn-toggle-advanced"><i class="ti ti-settings"></i> Advanced Settings</button>
+    <button class="btn-toggle-advanced" id="btn-toggle-advanced"><i class="ti ti-settings"></i> Impostazioni avanzate</button>
     <div class="advanced-settings hidden" id="advanced-settings">
       <div class="advanced-row">
-        <label>Cols</label><input type="number" id="session-cols" value="120" min="40" max="300" />
+        <label>Colonne</label><input type="number" id="session-cols" value="120" min="40" max="300" />
       </div>
       <div class="advanced-row">
-        <label>Rows</label><input type="number" id="session-rows" value="30" min="10" max="100" />
+        <label>Righe</label><input type="number" id="session-rows" value="30" min="10" max="100" />
       </div>
     </div>
   </div>
 
   <div class="form-actions">
-    <button class="btn-cancel" id="btn-cancel-session">Cancel</button>
-    <button class="btn-primary-action" id="btn-start-session"><i class="ti ti-player-play"></i> Start Session</button>
+    <button class="btn-cancel" id="btn-cancel-session">Annulla</button>
+    <button class="btn-primary-action" id="btn-start-session"><i class="ti ti-player-play"></i> Avvia</button>
   </div>
 </div>
 
@@ -302,62 +303,62 @@
 <div class="token-modal-backdrop hidden" id="token-modal-backdrop"></div>
 <div class="token-modal hidden" id="token-modal">
   <div class="token-modal-header">
-    <span class="token-modal-title"><i class="ti ti-chart-dots"></i> TOKEN EFFICIENCY REPORT</span>
+    <span class="token-modal-title"><i class="ti ti-chart-dots"></i> REPORT RESA TOKEN</span>
     <button class="btn-icon-xs" id="token-modal-close"><i class="ti ti-x"></i></button>
   </div>
   <div class="token-modal-body">
     <!-- Summary -->
     <div class="token-summary-row">
-      <div class="token-summary-item"><div class="ts-label">ACTUAL</div><div class="ts-value" id="tm-used">0</div></div>
+      <div class="token-summary-item"><div class="ts-label">USATI</div><div class="ts-value" id="tm-used">0</div></div>
       <span class="ts-sep"><i class="ti ti-arrow-right"></i></span>
-      <div class="token-summary-item"><div class="ts-label">BASELINE</div><div class="ts-value muted" id="tm-baseline">0</div></div>
+      <div class="token-summary-item"><div class="ts-label">BASE</div><div class="ts-value muted" id="tm-baseline">0</div></div>
       <span class="ts-sep">=</span>
-      <div class="token-summary-item"><div class="ts-label">SAVED</div><div class="ts-value accent" id="tm-saved">0</div></div>
+      <div class="token-summary-item"><div class="ts-label">RISPARMIO</div><div class="ts-value accent" id="tm-saved">0</div></div>
       <div class="token-summary-item"><div class="ts-eff" id="tm-efficiency">0%</div></div>
     </div>
 
     <!-- Breakdown Table -->
-    <div class="token-section-title">Baseline Estimation Breakdown</div>
+    <div class="token-section-title">Stima base</div>
     <table class="token-table">
-      <thead><tr><th>Source</th><th>Tokens</th><th>%</th></tr></thead>
+      <thead><tr><th>Fonte</th><th>Token</th><th>%</th></tr></thead>
       <tbody>
-        <tr><td>File reads</td><td id="tm-file-reads">0</td><td id="tm-file-pct">0%</td></tr>
-        <tr><td>Tool schemas</td><td id="tm-tool-schemas">0</td><td id="tm-tool-pct">0%</td></tr>
+        <tr><td>Letture file</td><td id="tm-file-reads">0</td><td id="tm-file-pct">0%</td></tr>
+        <tr><td>Schema tool</td><td id="tm-tool-schemas">0</td><td id="tm-tool-pct">0%</td></tr>
         <tr><td>Context window</td><td id="tm-context">0</td><td id="tm-ctx-pct">0%</td></tr>
       </tbody>
-      <tfoot><tr><td><strong>Total baseline</strong></td><td id="tm-total-baseline"><strong>0</strong></td><td><strong>100%</strong></td></tr></tfoot>
+      <tfoot><tr><td><strong>Base totale</strong></td><td id="tm-total-baseline"><strong>0</strong></td><td><strong>100%</strong></td></tr></tfoot>
     </table>
 
     <!-- Optimization Engines -->
-    <div class="token-section-title">Optimization Engines</div>
+    <div class="token-section-title">Motori di ottimizzazione</div>
     <div id="tm-optimizations"></div>
 
     <!-- Per-session history -->
-    <div class="token-section-title">Session History</div>
+    <div class="token-section-title">Storico sessioni</div>
     <div id="tm-history"></div>
   </div>
 </div>
 <div class="dialog" id="prompt-editor-dialog">
-  <h2 id="prompt-editor-title"><i class="ti ti-book dialog-icon"></i> New Prompt</h2>
-  <div class="form-group"><label>Title</label><input type="text" id="prompt-title-input" placeholder="Prompt name..." /></div>
-  <div class="form-group"><label>Content</label><textarea id="prompt-content-input" rows="12" placeholder="Prompt content..."></textarea></div>
-  <div class="form-actions"><button class="btn-cancel" id="btn-cancel-prompt">Cancel</button><button class="btn-primary-action" id="btn-save-prompt"><i class="ti ti-check"></i> Save</button></div>
+  <h2 id="prompt-editor-title"><i class="ti ti-book dialog-icon"></i> Nuovo prompt</h2>
+  <div class="form-group"><label>Titolo</label><input type="text" id="prompt-title-input" placeholder="Nome prompt..." /></div>
+  <div class="form-group"><label>Contenuto</label><textarea id="prompt-content-input" rows="12" placeholder="Scrivi qui il prompt..."></textarea></div>
+  <div class="form-actions"><button class="btn-cancel" id="btn-cancel-prompt">Annulla</button><button class="btn-primary-action" id="btn-save-prompt"><i class="ti ti-check"></i> Salva</button></div>
 </div>
 <div class="dialog" id="slot-editor-dialog">
-  <h2><i class="ti ti-bookmarks dialog-icon"></i> New Prompt Slot</h2>
-  <div class="form-group"><label>Label</label><input type="text" id="slot-label-input" placeholder="Slot name..." /></div>
-  <div class="form-group"><label>Prompt Body</label><textarea id="slot-body-input" rows="8" placeholder="Prompt that will be injected..."></textarea></div>
-  <div class="form-actions"><button class="btn-cancel" id="btn-cancel-slot">Cancel</button><button class="btn-primary-action" id="btn-save-slot"><i class="ti ti-check"></i> Save</button></div>
+  <h2><i class="ti ti-bookmarks dialog-icon"></i> Nuovo slot</h2>
+  <div class="form-group"><label>Etichetta</label><input type="text" id="slot-label-input" placeholder="Nome slot..." /></div>
+  <div class="form-group"><label>Corpo prompt</label><textarea id="slot-body-input" rows="8" placeholder="Testo che verrà iniettato nella sessione..."></textarea></div>
+  <div class="form-actions"><button class="btn-cancel" id="btn-cancel-slot">Annulla</button><button class="btn-primary-action" id="btn-save-slot"><i class="ti ti-check"></i> Salva</button></div>
 </div>
 
 <!-- Context menu -->
 <div class="ctx-backdrop hidden" id="ctx-backdrop"></div>
 <div class="ctx-menu hidden" id="ctx-menu">
-  <button class="ctx-item" id="ctx-rename"><i class="ti ti-pencil"></i> Rename</button>
+  <button class="ctx-item" id="ctx-rename"><i class="ti ti-pencil"></i> Rinomina</button>
   <div class="ctx-divider"></div>
-  <button class="ctx-item" id="ctx-inject"><i class="ti ti-send"></i> Send prompt</button>
+  <button class="ctx-item" id="ctx-inject"><i class="ti ti-send"></i> Invia prompt</button>
   <div class="ctx-divider"></div>
-  <button class="ctx-item ctx-item-danger" id="ctx-delete"><i class="ti ti-trash"></i> Delete</button>
+  <button class="ctx-item ctx-item-danger" id="ctx-delete"><i class="ti ti-trash"></i> Elimina</button>
 </div>
 
 <script src="./app.bundle.js"></script>

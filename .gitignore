@@ -1,8 +1,8 @@
 node_modules/
 dist/
 out/
-.promptops/
-.promptops-assets/
+.polpo-control-panel/
+.polpo-assets/
 *.log
 .DS_Store
 package-lock.json

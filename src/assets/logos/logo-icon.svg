@@ -1,11 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4F46E5"/>
-      <stop offset="50%" stop-color="#7C3AED"/>
-      <stop offset="100%" stop-color="#A855F7"/>
+    <linearGradient id="polpo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4aa"/>
+      <stop offset="100%" stop-color="#00a8ff"/>
     </linearGradient>
+    <radialGradient id="polpo-glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="64" height="64" rx="14" fill="#1e1f27"/>
-  <text x="32" y="44" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32" fill="url(#g)">PO</text>
+  <rect width="64" height="64" rx="14" fill="#0a0f1a"/>
+  <circle cx="32" cy="28" r="24" fill="url(#polpo-glow)"/>
+  <!-- mantle -->
+  <ellipse cx="32" cy="24" rx="13" ry="11" fill="url(#polpo-grad)"/>
+  <!-- eyes -->
+  <circle cx="28" cy="23" r="1.6" fill="#0a0f1a"/>
+  <circle cx="36" cy="23" r="1.6" fill="#0a0f1a"/>
+  <circle cx="28.4" cy="22.6" r="0.5" fill="#ffffff"/>
+  <circle cx="36.4" cy="22.6" r="0.5" fill="#ffffff"/>
+  <!-- tentacles: 8, alternating curves -->
+  <path d="M 21 32 Q 17 40 20 48 Q 22 44 21 40" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 25 34 Q 22 42 26 50 Q 27 46 25 42" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 29 35 Q 28 44 31 52" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 32 35 Q 33 44 32 53" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 35 35 Q 36 44 33 52" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 39 34 Q 42 42 38 50 Q 37 46 39 42" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 43 32 Q 47 40 44 48 Q 42 44 43 40" fill="none" stroke="url(#polpo-grad)" stroke-width="2.4" stroke-linecap="round"/>
 </svg>
