@@ -950,6 +950,27 @@ function renderTokenModal() {
 }
 
 // ═══════════════════════════════════════════════════════
+// EXTERNAL SPAWN (Sprint 4)
+// Receives POST /spawn from local HTTP server on port 9977.
+// ═══════════════════════════════════════════════════════
+window.api.onSpawnExternal(({ task, cwd, mode, provider }) => {
+  if (mode && MODE_CONFIGS[mode]) {
+    selectedMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+  }
+  if (cwd) {
+    currentWorkspace = cwd;
+    $('#workspace-label').textContent = cwd.split('/').slice(-1)[0];
+    $('#workspace-label').title = cwd;
+    renderWorkspaceSection(); refreshGit(); refreshAssets();
+  }
+  const title = task.slice(0, 40) + (task.length > 40 ? '…' : '');
+  spawnSubAgent(provider || 'claude', title, task);
+});
+
+// ═══════════════════════════════════════════════════════
 // START
 // ═══════════════════════════════════════════════════════
 init();

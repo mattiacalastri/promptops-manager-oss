@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const { execSync } = require('child_process');
 const pty = require('node-pty');
 
@@ -75,12 +76,21 @@ ipcMain.handle('terminal:create', (_e, { id, provider, cwd, initialPrompt, isSub
   // Sub-agents use 120×24 (same as main app SessionManager.createSession for sub-agents)
   const cols = 120;
   const rows = isSubAgent ? 24 : 30;
+  const home = process.env.HOME || '';
+  const extraPaths = [
+    `${home}/.local/bin`,
+    `${home}/.nvm/current/bin`,
+    '/usr/local/bin',
+    '/opt/homebrew/bin',
+  ].filter(p => p && p !== '/bin');
+  const extendedPath = [...new Set([...extraPaths, ...(process.env.PATH || '').split(':')])].join(':');
+
   const term = pty.spawn(shell_cmd, [], {
     name: 'xterm-256color',
     cols,
     rows,
     cwd: cwd || process.env.HOME,
-    env: { ...process.env, TERM: 'xterm-256color' },
+    env: { ...process.env, TERM: 'xterm-256color', PATH: extendedPath },
   });
   terminals.set(id, term);
 
@@ -277,3 +287,67 @@ ipcMain.handle('assets:openFolder', (_e, { cwd }) => {
   shell.openPath(getAssetsDir(cwd));
   return true;
 });
+
+// ═══════ EXTERNAL SPAWN SERVER (Sprint 4) ═══════
+// Listens on 127.0.0.1:9977 — local only, never exposed externally.
+// Auth: X-Polpo-Token header must match POLPO_SPAWN_TOKEN env var (default: 'polpo-local').
+
+const SPAWN_PORT = 9977;
+const SPAWN_HOST = '127.0.0.1';
+const SPAWN_TOKEN = process.env.POLPO_SPAWN_TOKEN || 'polpo-local';
+
+function notifyRenderer(event, payload) {
+  BrowserWindow.getAllWindows().forEach(w => w.webContents.send(event, payload));
+}
+
+const spawnServer = http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200);
+    res.end(JSON.stringify({ ok: true, version: '0.1.0-alpha' }));
+    return;
+  }
+
+  // Auth required for all other routes
+  if (req.headers['x-polpo-token'] !== SPAWN_TOKEN) {
+    res.writeHead(401);
+    res.end(JSON.stringify({ error: 'unauthorized' }));
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/spawn') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; if (body.length > 4096) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const { task, cwd, mode, provider } = JSON.parse(body);
+        if (!task) { res.writeHead(400); res.end(JSON.stringify({ error: 'task required' })); return; }
+        const payload = {
+          task: String(task).slice(0, 2000),
+          cwd: cwd ? String(cwd) : null,
+          mode: mode || 'sprint',
+          provider: provider || 'claude',
+        };
+        notifyRenderer('spawn:external', payload);
+        res.writeHead(200);
+        res.end(JSON.stringify({ ok: true, message: 'spawning session' }));
+      } catch {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: 'invalid json' }));
+      }
+    });
+    return;
+  }
+
+  res.writeHead(404);
+  res.end(JSON.stringify({ error: 'not found' }));
+});
+
+app.whenReady().then(() => {
+  spawnServer.listen(SPAWN_PORT, SPAWN_HOST, () => {
+    console.log(`[polpo] spawn server on ${SPAWN_HOST}:${SPAWN_PORT}`);
+  });
+});
+
+app.on('before-quit', () => spawnServer.close());

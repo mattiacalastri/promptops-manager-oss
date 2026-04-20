@@ -41,4 +41,7 @@ contextBridge.exposeInMainWorld('api', {
   assetsRename: (cwd, oldName, newName) => ipcRenderer.invoke('assets:rename', { cwd, oldName, newName }),
   assetsReadImage: (cwd, name) => ipcRenderer.invoke('assets:readImage', { cwd, name }),
   assetsOpenFolder: (cwd) => ipcRenderer.invoke('assets:openFolder', { cwd }),
+
+  // External spawn (Sprint 4) — fired by spawn server on POST /spawn
+  onSpawnExternal: (cb) => ipcRenderer.on('spawn:external', (_e, p) => cb(p)),
 });
